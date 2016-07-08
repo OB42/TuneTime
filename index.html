@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>TuneTime</title>
+<style>
+.search{
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    letter-spacing: .029em !important;
+    line-height: 16px !important;
+    background-color: white !important;
+    padding: 8px !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    outline: 0 !important;
+    color: black;
+    width: 90%;
+    margin: 5px 0;
+}
+@media(min-width:500px){
+    .search{
+        width: 96%;
+    }
+}
+@media(min-width:1024px){
+    .search{
+        width: 98%;
+    }
+}
+body{
+    background-color: #21252b;
+    margin: 0;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+span:not(.less){
+    width: 100%;
+    padding : 5px 0;
+    margin: 0;
+    overflow: hidden;
+    display: block;
+}
+p > span:not(.less):not(:first-child){
+    width: calc(100% - 32px);
+    float: right;
+}
+span:not(.less):nth-child(even){
+    background-color: #282c34;
+}
+.files > span:not(.less):nth-child(odd){
+    background-color: #21252b;
+}
+span:not(.less):nth-child(even) > a{
+    color: #abb2bf;
+}
+a{
+    text-decoration: none;
+    color: #9da5b4;
+}
+span > span:first-child{
+    max-height: 48px;
+    overflow: hidden;
+}
+div{
+    width: 100%;
+}
+form{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+}
+.results{
+    padding-top: 40px;
+}
+.less{
+    color: white;
+    font-size: 16px;
+    left: 8px;
+    font-weight: 900;
+    position: relative;
+    text-align: center;
+}
+.less > a{
+    text-decoration: none;
+}
+.files{
+    display: inline-block;
+    margin: 0;
+}
+@font-face {
+  font-family: "Symbola";
+  font-style: normal;
+  font-weight: normal;
+  src: url("http://s3-eu-west-1.amazonaws.com/tw-font/symbola/symbola.woff") format("woff");
+}
+.btn{
+    font-family: Symbola !important;
+    position: fixed;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+    left: 300px;
+}
+.btn > a{
+    color: white !important;
+    font-size: 30px;
+}
+audio{
+    margin: 0;
+    padding: 0;
+    bottom: 0;
+    position: fixed;
+}
+.ui{
+    position: fixed;
+    bottom: 0;
+    background-color: #282c34;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 30px;
+    font-weight: 900;
+}
+.ui > .btn > .active{
+    color: grey !important;
+}
+.more{
+    cursor: pointer;
+    background-color: white;
+    display: inline !important;
+    padding: .2em .6em .3em !important;
+    font-weight: 700 !important;
+    line-height: 2em !important;
+    color: grey !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: .25em !important;
+}
+center{
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+/*hiding the "More results" button when there is no torrents on the page*/
+center:first-child > .more{
+    display: none !important;
+}
+</style>
+</head>
+<body>
+    <div>
+        <form>
+            <input class="search" placeholder="Search a song !" type="text">
+        </form>
+        <div class="results">
+            <center><h2 class="more">More results</h2></center>
+        </div>
+    </div>
+    <div class="ui">
+        <audio src="data:audio/mp3," controls="controls" autoplay></audio>
+        <div class="btn">
+            <a href="#"><</a>
+            <a href="#">></a>
+            <a href="#" class="active">🔁</a>
+            <a href="#">🔀</a>
+        </div>
+    </div>
+    <script src="songs.js"></script>
+    <script src="scraper.js"></script>
+</body>
+</html>

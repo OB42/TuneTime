@@ -1,0 +1,31 @@
+{
+  "name": "tunetime",
+  "version": "0.1.0",
+  "description": "Instantly stream millions of songs using torrents",
+  "main": "app.js",
+  "dependencies": {
+    "parse-torrent": "5.8.0",
+    "torrent-stream": "1.0.3",
+    "blob-to-buffer": "1.2.6",
+    "electron": "0.4.1"
+  },
+  "scripts": {
+    "test": "electron app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oabtm/TuneTime.git"
+  },
+  "keywords": [
+    "music",
+    "streaming",
+    "torrent",
+    "p2p"
+  ],
+  "author": "oabtm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oabtm/TuneTime/issues"
+  },
+  "homepage": "https://github.com/oabtm/TuneTime#readme"
+}
