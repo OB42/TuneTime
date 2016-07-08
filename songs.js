@@ -24,6 +24,7 @@ setInterval(function(){
 }, 1)
 player.addEventListener("ended", function(){
     if(Math.floor(player.duration) !== Math.floor(lastTime)){
+        reloadPlayer()
         /*If the player was stopped by the browser(because the file wasn't completely loaded):
         we reload it on each piece download, until the file is playable*/
         currentTorrent.torrent.on("download", reloadPlayer)
