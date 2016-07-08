@@ -15,6 +15,9 @@ var player = document.querySelector("audio")
 var loadMoreCenter = results.firstChild
 var fileId = -1
 var lastTime = 0
+var currentSize = 0
+var lastSize = 0
+var lastExt = ""
 setInterval(function(){
     /*the timeupdate event is not precise enough(15 to 250ms interval),
     so in order to get an accurate time, we need to check every 1ms*/
@@ -23,11 +26,15 @@ setInterval(function(){
     }
 }, 1)
 player.addEventListener("ended", function(){
-    if(Math.floor(player.duration) !== Math.floor(lastTime)){
-        reloadPlayer()
-        /*If the player was stopped by the browser(because the file wasn't completely loaded):
-        we reload it on each piece download, until the file is playable*/
-        currentTorrent.torrent.on("download", reloadPlayer)
+    if(currentSize < currentTorrent.torrent.files[fileId].length){
+        lastSize = currentSize
+        currentSize = fs.statSync("./tmp/current." + lastExt).size
+        if(lastSize < currentSize){
+            reloadPlayer()
+        }
+        else {
+             currentTorrent.torrent.on("download", reloadPlayer)
+        }
     }
     else{
         if(goBack){
@@ -336,13 +343,16 @@ function writeSong(name, id){
     playNextSong()
 }
 function playNextSong(){
-    lastTime = 0
     if(fileId !== -1){
-        var ext =  currentTorrent.torrent.files[fileId].name.split(".");
+        var ext =  currentTorrent.torrent.files[fileId].name.split(".")
         ext = ext[ext.length - 1]
+        lastExt = ext
         currentTorrent.torrent.files[fileId].createReadStream().pipe(fs.createWriteStream("./tmp/current." + ext))
         setTimeout(function(){
+            currentSize = fs.statSync("./tmp/current." + ext).size
+            lastTime = 0
             player.src = "tmp/current." + ext
         },1)
+
     }
 }
