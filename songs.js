@@ -28,7 +28,7 @@ setInterval(function(){
 player.addEventListener("ended", function(){
     if(currentSize < currentTorrent.torrent.files[fileId].length){
         lastSize = currentSize
-        currentSize = fs.statSync("./tmp/current." + lastExt).size
+        currentSize = fs.statSync( __dirname + "/tmp/current." + lastExt).size
         if(lastSize < currentSize){
             reloadPlayer()
         }
@@ -304,7 +304,6 @@ function getSong(e){
         }
         else{
             player.addEventListener("error", function(){
-                //lastTime = player.currentTime
                 currentTorrent.torrent.on("download", reloadPlayer)
             })
             testCallback()
@@ -344,12 +343,14 @@ function writeSong(name, id){
 }
 function playNextSong(){
     if(fileId !== -1){
+        (document.querySelector(".current") || {}).className = ""
+        document.querySelectorAll(".files > span")[fileId + 1].className = "current"
         var ext =  currentTorrent.torrent.files[fileId].name.split(".")
         ext = ext[ext.length - 1]
         lastExt = ext
-        currentTorrent.torrent.files[fileId].createReadStream().pipe(fs.createWriteStream("./tmp/current." + ext))
+        currentTorrent.torrent.files[fileId].createReadStream().pipe(fs.createWriteStream(__dirname + "/tmp/current." + ext))
         setTimeout(function(){
-            currentSize = fs.statSync("./tmp/current." + ext).size
+            currentSize = fs.statSync(__dirname + "/tmp/current." + ext).size
             lastTime = 0
             player.src = "tmp/current." + ext
         },1)
