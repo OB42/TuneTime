@@ -2,7 +2,7 @@ var parseTorrent = require('parse-torrent')
 var fs = require("fs")
 var toBuffer = require('blob-to-buffer')
 var torrentStream = require("torrent-stream")
-var sites = require("./sites")
+var sites = require(__dirname + "/sites")
 var supported = ["mp4", "m4v", "mp3", "ogv", "ogm", "ogg", "oga", "webm", "wav"]//"m4a" is supposed to be supported, but is often unplayable, we'll add it if this get fixed
 var currentTorrent = {id: -1, name:"", torrent: {}}
 var lastSearch = {page:1, query:""}
@@ -29,13 +29,9 @@ player.addEventListener("ended", function(){
     console.log(currentSize,"/",currentTorrent.torrent.files[fileId].length)
     if(currentSize < currentTorrent.torrent.files[fileId].length){
         lastSize = currentSize
-        currentSize = fs.statSync("./tmp/current." + lastExt).size
-        if(lastSize <= currentSize){
-            reloadPlayer()
-        }
-        else {
-             currentTorrent.torrent.on("download", reloadPlayer)
-        }
+        currentSize = fs.statSync(__dirname + "/tmp/current." + lastExt).size
+        reloadPlayer()
+        currentTorrent.torrent.on("download", reloadPlayer)
     }
     else{
         if(goBack){
@@ -350,9 +346,9 @@ function playNextSong(){
         var ext =  currentTorrent.torrent.files[fileId].name.split(".")
         ext = ext[ext.length - 1]
         lastExt = ext
-        currentTorrent.torrent.files[fileId].createReadStream().pipe(fs.createWriteStream("./tmp/current." + ext))
+        currentTorrent.torrent.files[fileId].createReadStream().pipe(fs.createWriteStream(__dirname + "/tmp/current." + ext))
         setTimeout(function(){
-            currentSize = fs.statSync("./tmp/current." + ext).size
+            currentSize = fs.statSync(__dirname + "/tmp/current." + ext).size
             lastTime = 0
             player.src = "tmp/current." + ext
         },1)
