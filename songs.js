@@ -7,7 +7,7 @@ var supported = ["mp4", "m4v", "mp3", "ogv", "ogm", "ogg", "oga", "webm", "wav"]
 var currentTorrent = {id: -1, name:"", torrent: {}}
 var lastSearch = {page:1, query:""}
 var lastData = []
-var random = false, loop = true, goBack = false
+var random = false, loop = false, goBack = false
 var search = document.querySelector(".search")
 var results = document.querySelector(".results")
 var buttons = document.querySelectorAll(".btn a")
@@ -17,8 +17,13 @@ var fileId = -1
 var lastTime = 0
 var lastSize = 0
 var size = 0
-var lastExt = ""
+var randomIds = []
+var randomId = 0
+var randomDlId = 0
+var dlId = 0
+var ext = ""
 var stream
+noStreamEvent = false
 setInterval(function(){
 	/*the timeupdate event is not precise enough(15 to 250ms interval),
 	so in order to get an accurate time, we need to check every 1ms*/
@@ -27,6 +32,44 @@ setInterval(function(){
 	}
 }, 1)
 player.addEventListener("ended", function(){
+	if(Math.floor(player.currentTime) === Math.floor(lastTime)){
+		fileId = getNextFileId(fileId)
+		playNextSong()
+	}
+})
+function reloadPlayer(){
+    size = fs.statSync(__dirname + "/tmp/current." + ext).size
+    if(size > lastSize){
+        player.src = player.src
+        player.currentTime = lastTime
+    }
+    else if(!noStreamEvent){
+		noStreamEvent = true
+        stream.on("data", reloadOnData)
+    }
+	lastSize = size
+}
+function reloadOnData(){
+    player.src = player.src
+    player.currentTime = lastTime
+    lastSize = fs.statSync(__dirname + "/tmp/current." + ext).size
+	noStreamEvent = false
+    stream.removeListener("data", reloadOnData)
+}
+function shuffle (array) {
+  var i = 0
+    , j = 0
+    , temp = null
+
+  for (i = array.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1))
+    temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
+function getNextFileId(fileId, dl){
+	if(!loop){
 		if(goBack){
 			goBack = false
 			if(fileId){
@@ -37,35 +80,29 @@ player.addEventListener("ended", function(){
 			}
 		}
 		else if(random){
-			fileId = Math.floor(Math.random() * currentTorrent.torrent.files.length)
+			if(dl){
+			    if(randomDlId === currentTorrent.torrent.files.length - 1){
+			        shuffle(randomIds)
+					randomDlId = 0
+				}
+			    fileId = randomIds[randomDlId++]
+			}
+			else{
+			    if(randomId === currentTorrent.torrent.files.length - 1){
+			        shuffle(randomIds)
+					randomId = 0
+			    }
+				fileId = randomIds[randomId++]
+			}
 		}
 		else if(fileId < currentTorrent.torrent.files.length - 1){
 			fileId++
 		}
-		else if(loop){
+		else{
 			fileId = 0
 		}
-		else{
-			fileId = -1
-		}
-		playNextSong()
-})
-function reloadPlayer(){
-    size = fs.statSync(__dirname + "/tmp/current." + lastExt).size
-    if(size > lastSize){
-        player.src = player.src
-        player.currentTime = lastTime
-        lastSize = size
-    }
-    else{
-        stream.on("data", reloadOnData)
-    }
-}
-function reloadOnData(){
-    player.src = player.src
-    player.currentTime = lastTime
-    lastSize = fs.statSync(__dirname + "/tmp/current." + lastExt).size
-    stream.removeListener("data", reloadOnData)
+	}
+    return fileId
 }
 buttons[0].addEventListener("click", function(e){
 	goBack = true
@@ -158,7 +195,6 @@ function getResults(page, keywords, callback){
 					})
 					return arr.concat(temp);
 				}, [])
-
 				callback(results)
 			}
 		})
@@ -286,6 +322,9 @@ function getSong(e){
 		writeSong(name, id)
 	}
 	else{
+		randomId = 0
+		randomDlId = 0
+		dlId = 0
 		currentTorrent.id = id
 		currentTorrent.name = lastData[id].title
 		function callback(){
@@ -293,6 +332,16 @@ function getSong(e){
 				currentTorrent.torrent = torrentStream(fs.readFileSync(__dirname + "/torrent-stream/" + lastData[id].torrent.infoHash + ".torrent"), {tmp: __dirname, path: __dirname + "/torrent-stream/" + lastData[id].torrent.infoHash})
 				currentTorrent.torrent.on('ready', function() {
 					startFetching(name, id)
+				})
+				currentTorrent.torrent.on("download", function(){
+					if(currentTorrent.torrent.files[dlId].length === fs.statSync(__dirname + "/torrent-stream/" + currentTorrent.torrent.infoHash + "/" + currentTorrent.torrent.files[dlId].path).size){
+						currentTorrent.torrent.files.filter(function(f){
+							f.deselect()
+						})
+						dlId = getNextFileId(dlId, true)
+						currentTorrent.torrent.files[dlId].select()
+					}
+
 				})
 			}
 			else{
@@ -311,14 +360,17 @@ function getSong(e){
 	e.preventDefault()
 }
 function startFetching(name, id){
+	var k = 0
+	randomIds = []
 	for(var f = currentTorrent.torrent.files.length - 1; f > -1;f--){
 		if(!supportedFile(currentTorrent.torrent.files[f].name)){
 			currentTorrent.torrent.files.splice(f, 1)
 		}
 		else{
-			currentTorrent.torrent.files[f].select()
+			randomIds.push(k++)
 		}
 	}
+	shuffle(randomIds)
 	currentTorrent.torrent.files.sort(function(a, b){
 		if(a.name < b.name){
 			return -1
@@ -343,13 +395,14 @@ function playNextSong(){
 	if(fileId !== -1){
 		(document.querySelector(".current") || {}).className = ""
 		results.querySelectorAll("span:nth-child(" + (parseInt(currentTorrent.id) + 1)  + ") > .files > span:not(:first-child)")[fileId].className = "current"
-
-		var ext =  currentTorrent.torrent.files[fileId].name.split(".")
+		ext =  currentTorrent.torrent.files[fileId].name.split(".")
 		ext = ext[ext.length - 1]
-		lastExt = ext
 		stream = currentTorrent.torrent.files[fileId].createReadStream()
+		noStreamEvent = false
 		lastTime = 0
+		player.src = "data:audio/mp3,"
         function start(){
+			player.currentTime = lastTime
             size = fs.statSync(__dirname + "/tmp/current." + ext).size
             player.src = "tmp/current." + ext
 			if(!player.paused){

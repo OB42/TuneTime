@@ -49,19 +49,26 @@ p > span:not(.less):not(:first-child){
 }
 span:not(.less):nth-child(even){
     background-color: #282c34;
-}
-.files > span:not(.less):nth-child(odd){
-    background-color: #21252b;
-}
-span:not(.less):nth-child(even) > a{
     color: #abb2bf;
 }
+span:nth-child(even) > .files > span:not(.less):nth-child(odd),
+span:nth-child(odd) > .files > span:not(.less):nth-child(even){
+    background-color: #282c34;
+}
+
+span:nth-child(even) > .files > span:not(.less):nth-child(even),
+span:nth-child(odd) > .files > span:not(.less):nth-child(odd){
+    background-color: #21252b;
+}
 a{
-    text-decoration: none;
     color: #9da5b4;
+    text-decoration: none;
+}
+.results > span > span{
+    padding: 0 5px;
 }
 span > span:first-child{
-    max-height: 48px;
+    max-height: 56px;
     overflow: hidden;
 }
 div{
@@ -103,8 +110,6 @@ form{
     padding: 0;
     margin: 0;
     left: 300px;
-}
-.btn > a{
     color: white !important;
     font-size: 30px;
 }
@@ -123,9 +128,6 @@ audio{
     padding: 0;
     height: 30px;
     font-weight: 900;
-}
-.ui > .btn > .active{
-    color: grey !important;
 }
 .more{
     cursor: pointer;
@@ -148,6 +150,10 @@ center{
 center:first-child > .more{
     display: none !important;
 }
+.chevron,
+.active{
+    color: white;
+}
 </style>
 </head>
 <body>
@@ -162,9 +168,9 @@ center:first-child > .more{
     <div class="ui">
         <audio src="data:audio/mp3," controls="controls" autoplay></audio>
         <div class="btn">
-            <a href="#"><</a>
-            <a href="#">></a>
-            <a href="#" class="active">🔁</a>
+            <a href="#" class="chevron"><</a>
+            <a href="#" class="chevron">></a>
+            <a href="#">🔁</a>
             <a href="#">🔀</a>
         </div>
     </div>
