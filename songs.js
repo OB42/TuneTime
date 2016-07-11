@@ -7,7 +7,7 @@ var supported = ["mp4", "m4v", "mp3", "ogv", "ogm", "ogg", "oga", "webm", "wav"]
 var currentTorrent = {id: -1, name:"", torrent: {}}
 var lastSearch = {page:1, query:""}
 var lastData = []
-var random = false, loop = false, goBack = false
+var random = false, loop = false, goBack = false, goFurther = false
 var search = document.querySelector(".search")
 var results = document.querySelector(".results")
 var buttons = document.querySelectorAll(".btn a")
@@ -23,7 +23,7 @@ var randomDlId = 0
 var dlId = 0
 var ext = ""
 var stream
-noStreamEvent = false
+var noStreamEvent = false
 setInterval(function(){
 	/*the timeupdate event is not precise enough(15 to 250ms interval),
 	so in order to get an accurate time, we need to check every 1ms*/
@@ -32,8 +32,10 @@ setInterval(function(){
 	}
 }, 1)
 player.addEventListener("ended", function(){
-	if(Math.floor(player.currentTime) === Math.floor(lastTime)){
+	if(Math.floor(player.currentTime) === Math.floor(lastTime) && !noStreamEvent && (goBack || goFurther || currentTorrent.torrent.files[fileId].length === lastSize)){
 		fileId = getNextFileId(fileId)
+		goBack = false
+		goFurther = false
 		playNextSong()
 	}
 })
@@ -71,7 +73,6 @@ function shuffle (array) {
 function getNextFileId(fileId, dl){
 	if(!loop){
 		if(goBack){
-			goBack = false
 			if(fileId){
 				fileId--
 			}
@@ -110,7 +111,7 @@ buttons[0].addEventListener("click", function(e){
 	player.currentTime = player.duration
 })
 buttons[1].addEventListener("click", function(e){
-	//play the next song
+	goFurther = true
 	lastTime = player.duration
 	player.currentTime = player.duration
 })
@@ -324,7 +325,7 @@ function getSong(e){
 	else{
 		randomId = 0
 		randomDlId = 0
-		dlId = 0
+		dlId = id
 		currentTorrent.id = id
 		currentTorrent.name = lastData[id].title
 		function callback(){
@@ -333,21 +334,21 @@ function getSong(e){
 				currentTorrent.torrent.on('ready', function() {
 					startFetching(name, id)
 				})
-				currentTorrent.torrent.on("download", function(){
-					if(currentTorrent.torrent.files[dlId].length === fs.statSync(__dirname + "/torrent-stream/" + currentTorrent.torrent.infoHash + "/" + currentTorrent.torrent.files[dlId].path).size){
-						currentTorrent.torrent.files.filter(function(f){
-							f.deselect()
-						})
-						dlId = getNextFileId(dlId, true)
-						currentTorrent.torrent.files[dlId].select()
-					}
-
-				})
 			}
 			else{
 				currentTorrent.torrent = lastData[id].torrent
 				startFetching(name, id)
 			}
+			currentTorrent.torrent.on("download", function(){
+				if(currentTorrent.torrent.files[dlId].length === fs.statSync(__dirname + "/torrent-stream/" + currentTorrent.torrent.infoHash + "/" + currentTorrent.torrent.files[dlId].path).size){
+					currentTorrent.torrent.files.filter(function(f){
+						f.deselect()
+					})
+					dlId = getNextFileId(dlId, true)
+					currentTorrent.torrent.files[dlId].select()
+				}
+
+			})
 		}
 		if(typeof currentTorrent.torrent.destroy === "function"){
 			currentTorrent.torrent.destroy(callback)
