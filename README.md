@@ -8,4 +8,4 @@ Altough there is no restrictions imposed by the program itself, we do not condon
 ```
 npm install && electron app
 ```
-![Screenshot](http://i.imgur.com/ByFJjDl.png)
+![Screenshot](http://i.imgur.com/VzJAm1q.png)
