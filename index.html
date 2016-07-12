@@ -173,7 +173,7 @@ input[type="range"]{
         <div class="btn">
             <a href="#">&#9658;</a>
             <a href="#" class="active">🔉</a>
-            <input type="range" min="0" max="1" value="1" step="0.01">
+            <input type="range" min="0" max="1" value="1" step="0.01" oninput="player.volume = parseInt(this.value)">
             <a href="#" class="chevron"><</a>
             <a href="#" class="chevron">></a>
             <a href="#">🔁</a>
