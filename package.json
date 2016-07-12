@@ -1,6 +1,6 @@
 {
   "name": "tunetime",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Instantly stream millions of songs using torrents",
   "main": "app.js",
   "dependencies": {
