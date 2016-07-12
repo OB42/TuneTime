@@ -109,7 +109,6 @@ form{
     bottom: 0;
     padding: 0;
     margin: 0;
-    left: 300px;
     color: white !important;
     font-size: 30px;
 }
@@ -150,10 +149,14 @@ center{
 center:first-child > .more{
     display: none !important;
 }
+input[type="range"]{
+    width: 80px;
+}
 .chevron,
 .active{
     color: white;
 }
+
 </style>
 </head>
 <body>
@@ -166,8 +169,11 @@ center:first-child > .more{
         </div>
     </div>
     <div class="ui">
-        <audio src="data:audio/mp3," controls="controls" autoplay></audio>
+    <audio src="data:audio/mp3," autoplay></audio>
         <div class="btn">
+            <a href="#">&#9658;</a>
+            <a href="#" class="active">🔉</a>
+            <input type="range" min="0" max="1" value="1" step="0.01">
             <a href="#" class="chevron"><</a>
             <a href="#" class="chevron">></a>
             <a href="#">🔁</a>
