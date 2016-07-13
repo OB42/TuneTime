@@ -1,16 +1,13 @@
 {
   "name": "tunetime",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Instantly stream millions of songs using torrents",
   "main": "app.js",
   "dependencies": {
     "parse-torrent": "5.8.0",
     "torrent-stream": "1.0.3",
     "blob-to-buffer": "1.2.6",
-    "electron": "0.4.1"
-  },
-  "scripts": {
-    "test": "electron app"
+    "electron-prebuilt": "1.2.7"
   },
   "repository": {
     "type": "git",
