@@ -16,7 +16,6 @@ exports.get = function(e){
 		function callback(){
 			currentTorrent.torrent = lastData[id].torrent
 			startFetching(name, id)
-			currentTorrent.torrent.on("download", onDl)
 			currentTorrent.torrent.on('idle', onIdle)
 		}
 		if(typeof currentTorrent.torrent.destroy === "function"){
@@ -61,22 +60,13 @@ exports.playNext = function(){
 		}
 	}
 }
-function onDl(){
-	if(fetched){
-		currentTorrent.torrent.removeListener("download", onDl)
-	}
-	else if(currentTorrent.torrent.files[dlId].length === fs.statSync(__dirname + "/torrent-stream/" + currentTorrent.torrent.infoHash + "/" + currentTorrent.torrent.files[dlId].path).size){
+function onIdle(){
+	var f = 0
+	while(f++ < currentTorrent.torrent.files.length && currentTorrent.torrent.files[dlId].length === fs.statSync(__dirname + "/torrent-stream/" + currentTorrent.torrent.infoHash + "/" + currentTorrent.torrent.files[dlId].path).size){
 		currentTorrent.torrent.files[dlId].fetched = true
-		currentTorrent.torrent.files.filter(function(f){
-			f.deselect()
-		})
-		while(currentTorrent.torrent.files[dlId].fetched){
-			dlId = file.nextId(dlId, true)
-		}
+		dlId = file.nextId(dlId, true)
+	}
+	if(!currentTorrent.torrent.files[dlId].fetched){
 		currentTorrent.torrent.files[dlId].select()
 	}
-}
-function onIdle(){
-	fetched = true
-	currentTorrent.torrent.removeListener("idle", onIdle)
 }
