@@ -25,8 +25,9 @@ document.querySelector(".btn > input").addEventListener("input", function(){
 		buttons[1].innerHTML = "🔉"
 	}
 })
-document.querySelector(".more").addEventListener("click", function(){
+document.querySelector(".more").addEventListener("click", function(e){
 	search(lastSearch.page++, lastSearch.query)
+	e.preventDefault()
 })
 function changePlay(){
 	if(this.innerHTML === "⏸"){
@@ -38,6 +39,7 @@ function changePlay(){
 		player.play()
 	}
 	this.onclick = changePlay
+	return false
 }
 player.onplay = function(){
 	buttons[0].innerHTML = "⏸"
@@ -49,10 +51,12 @@ buttons[0].onclick = changePlay
 buttons[2].addEventListener("click", function(e){
 	goBack = true
 	next()
+	e.preventDefault()
 })
 buttons[3].addEventListener("click", function(e){
 	goFurther = true
 	next()
+	e.preventDefault()
 })
 buttons[4].addEventListener("click", function(e){
 	if(loop){
@@ -63,6 +67,7 @@ buttons[4].addEventListener("click", function(e){
 		loop = true
 		this.className = "active"
 	}
+	e.preventDefault()
 })
 buttons[5].addEventListener("click", function(e){
 	if(random){
