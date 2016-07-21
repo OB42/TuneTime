@@ -6,7 +6,7 @@
 		                       "scrapingMethod": "default",
 		                       "attribute": "href",
 		                       "as": "music[n].url",
-		                       "function": "console.log(\"magnet:?xt=urn:btih:\" + x.substr(1) + \"&tr=http://www.opentrackr.org/announce\"); return \"magnet:?xt=urn:btih:\" + x.substr(1) + \"&tr=http://www.opentrackr.org/announce\"",
+		                       "function": "return \"magnet:?xt=urn:btih:\" + x.substr(1) + \"&tr=http://www.opentrackr.org/announce\"",
 		                       "offset": {
 		                               "from": 0,
 		                               "to": 0
