@@ -15,7 +15,7 @@ module.exports = function(current){
 		})
 	}
 	else{
-		var filename = lastData[current.id].url.split("magnet:?xt=urn:btih:")[1].split("&dn=")[0]
+		var filename = lastData[current.id].url.split("magnet:?xt=urn:btih:")[1].split("&")[0]
 		fs.readFile(__dirname + "/torrent-stream/" + filename + ".torrent"+ filename, function(err, torrent){
 			if(err){
 				lastData[current.id].torrent = torrentStream(lastData[current.id].url, {tmp: __dirname, path: __dirname + "/torrent-stream/" + filename})
