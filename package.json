@@ -6,8 +6,7 @@
   "dependencies": {
     "parse-torrent": "5.8.0",
     "torrent-stream": "1.0.3",
-    "blob-to-buffer": "1.2.6",
-    "electron-prebuilt": "1.2.7"
+    "blob-to-buffer": "1.2.6"
   },
   "repository": {
     "type": "git",
