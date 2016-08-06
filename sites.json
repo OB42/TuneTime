@@ -1,31 +1,4 @@
 {
-	"http://www.torrentz.eu/search?f=album+album&p=PAGE_TO_USE/": {
-		"pattern": {
-			"HTML>BODY>DIV.results>DL>DT>A": [
-		               {
-		                       "scrapingMethod": "default",
-		                       "attribute": "href",
-		                       "as": "music[n].url",
-		                       "function": "return \"magnet:?xt=urn:btih:\" + x.substr(1) + \"&tr=http://www.opentrackr.org/announce\"",
-		                       "offset": {
-		                               "from": 0,
-		                               "to": 0
-		                       }
-		               },
-		               {
-		                       "scrapingMethod": "default",
-		                       "attribute": "innerText",
-		                       "as": "music[n].title",
-		                       "function": "return x;",
-		                       "offset": {
-		                               "from": 0,
-		                               "to": 0
-		                       }
-		               }
-		       ]
-		},
-		"fromZero": true
-	},
 	"https://ahoy.one/search/album%20album/PAGE_TO_USE/7/100/": {
 		"pattern": {
 			"HTML>BODY>DIV>DIV>DIV>TABLE>TBODY>TR>TD>DIV.detName>A.detLink": [{
